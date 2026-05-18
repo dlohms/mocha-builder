@@ -244,6 +244,11 @@ export default async function handler(req, res) {
       if (response.status === 529) {
         return res.status(503).json({ error: 'Anthropic API is overloaded. Try again in a few seconds.' })
       }
+      // Credit balance errors come back as 400 with specific message text
+      if (message.toLowerCase().includes('credit') || message.toLowerCase().includes('billing') || message.toLowerCase().includes('balance')) {
+        return res.status(402).json({ error: 'Your Anthropic credit balance is too low. Go to console.anthropic.com → Plans & Billing to add credits.' })
+      }
+      // Strip any internal fields — only return the message string, never raw API objects
       return res.status(response.status).json({ error: message })
     }
 

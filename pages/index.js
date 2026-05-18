@@ -247,12 +247,17 @@ export default function Home() {
 
             // Handle error events mid-stream
             if (parsed.error) {
-              setMessages(prev => [...prev, { role: 'error', text: parsed.error }])
+              const errMsg = typeof parsed.error === 'string' 
+                ? parsed.error 
+                : parsed.error?.message || 'Unknown error'
+              setMessages(prev => [...prev, { role: 'error', text: errMsg }])
               break
             }
 
+            // ONLY process delta.text — ignore all other fields (model, id, type, usage, etc.)
+            // This prevents internal Anthropic fields from ever leaking into the UI
             const delta = parsed?.delta?.text ?? ''
-            if (delta) {
+            if (delta && typeof delta === 'string') {
               fullHtml += delta
               previewThrottle += delta.length
 
