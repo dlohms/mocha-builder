@@ -1,0 +1,3 @@
+# Remove or edit this when you're ready to go public
+User-agent: *
+Disallow: /
